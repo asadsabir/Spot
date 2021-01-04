@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/ms.css">
+</head>
+
+<body style="background: url(https://www.b2w.tv/hubfs/music_01-05.jpg);">
+    <div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6" style="color: rgb(254,254,254); position: relative;"><div class="container" id="container">
+      <div id="playlists">
+        <div id="new-playlist-params">
+          <h2>From which playlists would you like to sort your songs?</h2>
+          <form id="playlist-form" style="font-size: large;">
+            <input id="pickallplaylists" type="checkbox">
+            <label for="pickallplaylists">Toggle all</label><br>
+            <input id="pickuserplaylists" type="checkbox">
+            <label for="pickuserplaylists">Toggle playlists you've made</label><br>
+            <input id="likedsongs" type="checkbox">
+            <label for="likedsongs">Your Liked songs</label><br>
+          </form>
+        </div>
+      </div>
+      <div style="font-size: large;" id="audio-features">
+        <h1 style="font-size: xx-large;">Choose that mooood</h1>
+        <div id="energy">
+          <p class="feature">Energy</p>
+          <div id="slider1"></div>
+        </div>
+        <div id="danceability">
+          <p class="feature">Danceability</p>
+          <div id="slider2"></div>
+        </div>
+        <div id="popularity">
+          <p class="feature">Popularity</p>
+          <div id="slider3"></div>
+        </div>
+        <div id="valence">
+          <p class="feature">Positiveness</p>
+          <div id="slider4"></div>
+        </div>
+        <div id="speechiness">
+          <p class="feature">Speechiness</p>
+          <div id="slider5"></div>
+        </div>
+        <div id="tempo">
+          <p class="feature">Tempo</p>
+          <div id="slider6"></div>
+        </div>
+        <div id="acousticness">
+          <p class="feature">Acousticness</p>
+          <div id="slider7"></div>
+        </div>
+        <div id="final" style="position: relative; top: 350px;">
+          <h1>Playlist Name</h1>
+          <input type="text" id="finalplaylistname">
+        </div>
+      </div>
+      <div style="font-size: xx-large; position: fixed; top: 20px;" id="loading">Loading up your songs, <br>this may take a while...
+        <br>
+        <img id="songimg">
+      </div>
+    </div>
+    <button class="btn btn-primary" id="playlist-submit" type="button">Next</button><button class="btn btn-primary" id="feature-submit" type="button">Add Playlist to my Library!</button></div>
+                <div class="col-md-6" id="image-column">
+                </div>
+        </div>
+    </div>
+    </div>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="assets/js/con.js"></script>
+</body>
+
+</html>

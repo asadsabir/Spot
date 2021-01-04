@@ -1,0 +1,296 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Example of the Authorization Code flow with Spotify</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style type="text/css">
+      #login, #playlists {
+        display: none;
+      }
+      .text-overflow {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 500px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container" id="container">
+      <div id="playlists">
+        <div id="new-playlist-params">
+          From which playlists would you like to sort your songs?
+          <form id="playlist-form">
+          </form>
+          <button class="btn btn-default" id="playlist-submit" >next</button>
+        </div>
+        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+      </div>
+      <div id="genres">
+        <div id="new-genre-params">
+          Choose your genres
+          <form id="genre-choices">
+          </form>
+          <button class="btn btn-default" id="genre-submit" >next</button>
+        </div>
+      </div>
+      <div id="audio-features">
+        Choose that mooood
+        <div id="energy">
+          Energy
+          <div id="slider1"></div>
+        </div>
+        <div id="danceability">
+          Danceability
+          <div id="slider2"></div>
+        </div>
+        <div id="popularity">
+          Popularity
+          <div id="slider3"></div>
+        </div>
+        <div id="valence">
+          Positiveness
+          <div id="slider4"></div>
+        </div>
+        <div id="speechiness">
+          Speechiness
+          <div id="slider5"></div>
+        </div>
+        <div id="tempo">
+          Tempo
+          <div id="slider6"></div>
+        </div>
+      </div>
+    </div>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+      /*
+      configure refresh page
+      add liked songs
+      add a 'choose everything'
+      add a 'choose my playlists'
+      */
+      console.log(window.location.pathname.substring(1))
+      var access_token = window.location.pathname.substring(1) 
+      $('#audio-features').hide();
+      $('#genres').hide();
+      $('#loggedin').hide();
+      var playlist_songs = [];
+      var genre_songs = [];
+      var pgenres = [];
+      document.getElementById('genre-submit').addEventListener('click',function(){
+        console.log(playlist_songs);
+        var picked_genres = [];
+        pgenres.forEach((g) => {
+          if (document.getElementById(g).checked){picked_genres.push(g)}
+        })
+        playlist_songs.forEach((ps) => {
+          ps.genres.forEach((psg) => {
+            if(picked_genres.find(l => l == psg) == psg && genre_songs.find(s => s.id == ps.id) == undefined){
+              genre_songs.push(ps);
+              console.log(ps)
+            }
+          })
+        })
+        $('#genres').hide();
+        var slider = document.createElement('div');
+        var slider_min = document.createElement('div');
+        var slider_max = document.createElement('div');
+        slider.id = 'slider'
+        document.getElementById('slider2').appendChild(slider);
+        document.getElementById('slider').appendChild(slider_min);
+        slider_min.id = 'slider_min'
+        document.getElementById('slider').appendChild(slider_max);
+        slider_max.id = 'slider_max'
+        $('#audio-features').show();
+        $('#slider').slider({
+          range: true,
+          min: 0,
+          max: 100,
+          values: [0,100],
+          change: (event, ui) => {
+            slider_max.innerHTML = 'max:'+ ui.values[1];
+            slider_min.innerHTML = 'min:'+ ui.values[0];
+          }
+        })
+        slider_max.innerHTML = 'max:'+ $('#slider').slider('values',1)
+        slider_min.innerHTML = 'min:'+ $('#slider').slider('values',0)
+      })
+      document.getElementById('playlist-submit').addEventListener('click',function(){
+        var picked_playlistIDs = [];
+        function GetAll(r,flag){
+          if(r == null){
+            if(flag.slice(37,flag.indexOf('/tracks')) == picked_playlistIDs[picked_playlistIDs.length-1]){
+              $('#genres').show();
+              playlist_songs.forEach((s) => {
+                s.genres = [];
+                s.artists.forEach((a) => {
+                  setTimeout(() => {
+                    $.ajax({
+                      url:a.href,
+                      headers: {
+                        'Authorization': 'Bearer ' + access_token
+                      },
+                      success: (a_info)=>{
+                        s.genres = [...s.genres,...a_info.genres];
+                        a_info.genres.forEach((g) =>{
+                          if (pgenres.find(pg => pg == g) == g){
+                            console.log('r');
+                          }else{
+                            pgenres.push(g)
+                            var genre_option = document.createElement('input');
+                            document.getElementById('genre-choices').appendChild(genre_option);
+                            var genre_label = document.createElement('label');
+                            document.getElementById('genre-choices').appendChild(genre_label);
+                            var lin = document.createElement('br');
+                            document.getElementById('genre-choices').appendChild(lin);
+                            genre_option.type = 'checkbox'
+                            genre_label.for = g;
+                            genre_label.innerHTML = g
+                            genre_option.id = g;
+                          }
+                        })
+                      }
+                    })
+                  }, 1);
+                  
+                })
+              })
+            }
+          }else{
+            setTimeout(() => {
+              $.ajax({
+                url: r,
+                headers: {
+                  'Authorization': 'Bearer ' + access_token
+                },
+                success: function(repond){
+                  repond.items.forEach(function(pt){
+                    if(playlist_songs.find(j => j.id == pt.track.id) == undefined){
+                      playlist_songs.push(pt.track)
+                    }else{console.log(pt.track)}
+                  })
+                  GetAll(repond.next,flag);
+                }
+              })
+            }, 1);
+            
+          }
+          
+        }
+        for(i = 0; i < userplaylists.length; i++){
+          if (document.getElementById(userplaylists[i].id).checked){
+            picked_playlistIDs.push(userplaylists[i].id);
+          }
+        }
+        $('#playlists').hide();
+        for(p = 0; p < picked_playlistIDs.length; p++){
+          $.ajax({
+            url:'https://api.spotify.com/v1/playlists/'+picked_playlistIDs[p]+'/tracks',
+            headers: {
+              'Authorization': 'Bearer ' + access_token
+            },
+            success: function(pl){
+              console.log(pl);
+              pl.items.forEach(function(pt){
+                if(playlist_songs.find(j => j.id == pt.track.id) == undefined){playlist_songs.push(pt.track)}
+              })
+              GetAll(pl.next,pl.href);
+            }
+          })
+        }
+      }); 
+      /**
+       * Obtains parameters from the hash of the URL
+       * @return Object
+       */
+      function getHashParams() {
+        var hashParams = {};
+        var e, r = /([^&;=]+)=?([^&;]*)/g,
+            q = window.location.hash.substring(1);
+        while ( e = r.exec(q)) {
+            hashParams[e[1]] = decodeURIComponent(e[2]);
+        }
+        console.log(hashParams);
+        return hashParams;
+      }
+
+      
+      if(access_token){
+        $.ajax({
+            url: 'https://api.spotify.com/v1/me',
+            headers: {
+              'Authorization': 'Bearer ' + access_token
+            },
+            success: function(response) {
+              //document.getElementById('user-profile').innerHTML = 'Welcome ' + response.display_name
+              userInfo = response
+              console.log(response);
+              $('#login').hide();
+            $.ajax({
+              url: 'https://api.spotify.com/v1/me/playlists?limit=50',
+              headers: {
+                'Authorization': 'Bearer ' + access_token
+              },
+              success: function(response) {
+                userplaylists = response.items;
+                function GetAll(r){
+                  if (r == null){
+                    console.log(userplaylists);
+                    for(i = 0; i < userplaylists.length; i++){
+                      var playlist_option = document.createElement('input');
+                      document.getElementById('playlist-form').appendChild(playlist_option);
+                      var playlist_label = document.createElement('label');
+                      document.getElementById('playlist-form').appendChild(playlist_label);
+                      var lin = document.createElement('br');
+                      document.getElementById('playlist-form').appendChild(lin);
+                      playlist_option.type = 'checkbox'
+                      playlist_label.for = userplaylists[i].id;
+                      playlist_label.innerHTML = userplaylists[i].name
+                      playlist_option.id = userplaylists[i].id;
+                    }
+                  }else{
+                  $.ajax({
+                    url: r,
+                    headers: {
+                      'Authorization': 'Bearer ' + access_token
+                    },
+                    success: function(repond){
+                      userplaylists = userplaylists.concat(repond.items);
+                      GetAll(repond.next);
+                    }
+                  })
+                  }
+                }
+                GetAll(response.next);
+              }
+            });
+              $('#playlists').show();
+            }
+        });
+      } else {
+          // render initial screen
+          $('#login').show();
+          $('#playlists').hide();
+      }
+
+      document.getElementById('obtain-new-token').addEventListener('click', function() {
+        $.ajax({
+          url: '/refresh_token',
+          data: {
+            'refresh_token': refresh_token
+          }
+        }).done(function(data) {
+          access_token = data.access_token;
+          console.log(data);
+        });
+      }, false);
+      
+      
+    </script>
+  </body>
+</html>
+

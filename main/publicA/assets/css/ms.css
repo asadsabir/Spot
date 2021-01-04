@@ -1,0 +1,33 @@
+#danceability{
+    position: relative;
+    top: 50px;
+}
+#popularity{
+    position: relative;
+    top: 100px;
+}
+#valence{
+    position: relative;
+    top: 150px;
+}
+#speechiness{
+    position: relative;
+    top: 200px;
+}
+#tempo{
+    position: relative;
+    top: 250px;
+}
+#acousticness{
+    position: relative;
+    top: 300px;
+}
+
+#feature-submit{
+    position: relative;
+    top: 400px;
+}
+.feature{
+    font-size: 24px;
+}
+
