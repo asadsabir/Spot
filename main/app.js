@@ -22,7 +22,7 @@ const { connected } = require('process');
 
 var client_id = '0edd944e89fa413e9f22a874d46c520e'; // Your client id
 var client_secret = '3cc7493f4fe94f21b15c1c4036bd4144'; // Your secret
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+var redirect_uri = 'http://localhost:7777/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -153,6 +153,6 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-console.log('Listening on 8888');
-app.listen(8888);
+console.log('Listening on 7777');
+app.listen(7777);
 
